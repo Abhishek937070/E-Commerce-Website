@@ -1,20 +1,22 @@
 package com.ecommerce.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "cart_items")
 public class CartItem {
-
-    @Id
     private Long productId;
-
     private String name;
     private double price;
     private String imageName;
     private int quantity;
+
+    public CartItem() {
+    }
+
+    public CartItem(Long productId, String name, double price, String imageName, int quantity) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+        this.imageName = imageName;
+        this.quantity = quantity;
+    }
 
     // Getters and Setters
 

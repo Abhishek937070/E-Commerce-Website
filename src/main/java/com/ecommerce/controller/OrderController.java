@@ -2,53 +2,67 @@ package com.ecommerce.controller;
 
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.OrderItem;
-import com.ecommerce.repository.CartRepository;
-import com.ecommerce.repository.OrderRepository;
+import com.ecommerce.repository.OrderItemRepository;
+import com.ecommerce.repository.ProductRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model; // ✅✅ Required import
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
+@RequestMapping("/order")
 public class OrderController {
 
     @Autowired
-    private CartRepository cartRepo;
+    private ProductRepository productRepository;
 
     @Autowired
-    private OrderRepository orderRepo;
+    private OrderItemRepository orderItemRepository;
 
-    @GetMapping("/checkout")
-    public String checkoutForm(Model model) {
-        double total = cartRepo.findAll().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
-        model.addAttribute("total", total);
-        return "checkout";
+    @PostMapping("/buy")
+    public String buyNow(@RequestParam Long productId, HttpSession session) {
+        productRepository.findById(productId).ifPresent(product -> {
+            OrderItem order = new OrderItem();
+            order.setProductId(product.getId());
+            order.setName(product.getName());
+            order.setPrice(product.getPrice());
+            order.setImageName(product.getImageName());
+            order.setQuantity(1);
+            orderItemRepository.save(order);
+        });
+        return "redirect:/orders";
     }
 
     @PostMapping("/checkout")
-    public String placeOrder(@RequestParam String name, @RequestParam String address) {
-        double total = cartRepo.findAll().stream()
-                .mapToDouble(item -> item.getPrice() * item.getQuantity())
-                .sum();
-
-        OrderItem order = new OrderItem();
-        order.setCustomerName(name);
-        order.setAddress(address);
-        order.setTotalPrice(total);
-        order.setOrderDate(new Date());
-
-        orderRepo.save(order);
-        cartRepo.deleteAll();
-        return "redirect:/order/success";
+    public String checkout(HttpSession session) {
+        List<CartItem> cart = (List<CartItem>) session.getAttribute("cart");
+        if (cart != null) {
+            for (CartItem item : cart) {
+                OrderItem order = new OrderItem();
+                order.setProductId(item.getProductId());
+                order.setName(item.getName());
+                order.setPrice(item.getPrice());
+                order.setImageName(item.getImageName());
+                order.setQuantity(item.getQuantity());
+                orderItemRepository.save(order);
+            }
+            session.removeAttribute("cart");
+        }
+        return "redirect:/orders";
     }
 
-    @GetMapping("/order/success")
-    public String successPage() {
-        return "order_success";
+    @GetMapping("/admin")
+    public String adminOrders(Model model) {
+        model.addAttribute("orders", orderItemRepository.findAll());
+        return "admin_orders";
+    }
+
+    @GetMapping("/all")
+    public String allOrders(Model model) {
+        model.addAttribute("orders", orderItemRepository.findAll());
+        return "orders";
     }
 }

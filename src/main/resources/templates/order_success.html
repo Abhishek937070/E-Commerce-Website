@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Order Successful</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Order Placed</title>
 </head>
 <body>
-    <h2>🎉 Order Placed Successfully!</h2>
-    <p>Thank you for your purchase. Your order has been placed.</p>
-    <a href="/">Go to Home</a>
+    <h2>Thank you! Your order was placed successfully.</h2>
+    <p>Order ID: <span th:text="${orderId}"></span></p>
+    <a href="/user/home">Back to Shopping</a>
 </body>
 </html>
