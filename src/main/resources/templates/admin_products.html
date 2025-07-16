@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Product List</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: right;">
+            <a href="/admin/logout">🔓 Logout</a>
+        </div>
+        <h2>Admin - Product Management</h2>
+        <a href="/admin/add-product">➕ Add Product</a>
+        <table>
+            <tr>
+                <th>Image</th><th>Name</th><th>Price</th><th>Actions</th>
+            </tr>
+            <tr th:each="product : ${products}">
+                <td><img th:src="@{'/uploads/' + ${product.imageName}}" width="80"/></td>
+                <td th:text="${product.name}"></td>
+                <td th:text="${product.price}"></td>
+                <td>
+                    <a th:href="@{'/admin/edit/' + ${product.id}}">Edit</a> |
+                    <a th:href="@{'/admin/delete/' + ${product.id}}">Delete</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

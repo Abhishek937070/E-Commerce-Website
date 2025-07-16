@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h2>Checkout</h2>
+    <form action="/checkout" method="post">
+        <label>Name: <input type="text" name="name" required></label><br>
+        <label>Address: <textarea name="address" required></textarea></label><br>
+        <p>Total: ₹<span th:text="${total}"></span></p>
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>
